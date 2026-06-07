@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>KS Photography Studio</title>
+<link href=https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet""/>
+<style>
+/* ══════════════════════════════════════════════════════
+   ROOT TOKENS
+══════════════════════════════════════════════════════ */
+:root{
+  --ink:#0a0908;
+  --ink2:#141210;
+  --ink3:#1e1b18;
+  --ink4:#2a2520;
+  --cream:#f5f0e8;
+  --cream2:#ede8df;
+  --warm:#c8a96e;
+  --warm2:#e8c98a;
+  --warm3:#8b6d3f;
+  --muted:#6b6258;
+  --dim:#3a3530;
+  --border:rgba(200,169,110,.15);
+  --border2:rgba(200,169,110,.3);
+  --ff-serif:'Playfair Display',Georgia,serif;
+  --ff-sans:'Jost',system-ui,sans-serif;
+  --nav-h:70px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+
+/* ══════════════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--ink);color:var(--cream);
+  font-family:var(--ff-sans);font-weight:300;
+  line-height:1.7;overflow-x:hidden;
+  cursor:none;
+}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{cursor:none;background:none;border:none;font-family:inherit}
+
+/* ══════════════════════════════════════════════════════
+   CUSTOM CURSOR
+══════════════════════════════════════════════════════ */
+#cursor{
+  position:fixed;width:10px;height:10px;
+  background:var(--warm);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width .2s var(--ease),height .2s var(--ease),background .2s;
+  mix-blend-mode:normal;
+}
+#cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:1px solid var(--warm);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:width .35s var(--ease),height .35s var(--ease),
+             transform .08s linear,border-color .2s;
+}
+body:hover #cursor-ring{transition:transform .08s linear,width .35s,height .35s,border-color .2s}
+.cursor-hover #cursor{width:6px;height:6px;background:var(--warm2)}
+.cursor-hover #cursor-ring{width:56px;height:56px;border-color:var(--warm2)}
+
+/* ══════════════════════════════════════════════════════
+   NOISE OVERLAY
+══════════════════════════════════════════════════════ */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:.028;pointer-events:none;z-index:9990;
+}
+
+/* ══════════════════════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════════════════════ */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:var(--warm3);border-radius:2px}
+
+/* ══════════════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════════════ */
+.container{max-width:1320px;margin:0 auto;padding:0 2.5rem}
+.label{
+  font-family:var(--ff-sans);font-size:9px;font-weight:500;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--warm);
+}
+.serif{font-family:var(--ff-serif)}
+.gold{color:var(--warm)}
+
+/* ══════════════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════════════ */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:var(--nav-h);
+  display:flex;align-items:center;
+  transition:background .4s,border-color .4s,backdrop-filter .4s;
+  border-bottom:1px solid transparent;
+}
+#nav.scrolled{
+  background:rgba(10,9,8,.88);
+  border-bottom-color:var(--border);
+  backdrop-filter:blur(20px) saturate(1.2);
+}
+.nav-inner{
+  width:100%;max-width:1320px;margin:0 auto;padding:0 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo-link{display:flex;align-items:center;gap:2px;text-decoration:none}
+.logo-box{
+  width:8px;height:8px;border:1px solid var(--warm);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-serif);font-size:6px;color:var(--warm);
+  font-style:italic;
+  /* Replace with: <img src="your-logo.png" style="width:38px;height:38px;object-fit:contain"> */
+}
+.logo img{
+    height:60px;
+    width:auto;
+}
+
+.logo-name{
+  font-family:var(--ff-serif);font-size: 18px;font-weight:40;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--cream);
+}
+.logo-name sup{
+  font-size:8px;letter-spacing:.15em;color:var(--warm);
+  vertical-align:super;margin-left:2px;font-family:var(--ff-sans);font-style:normal;
+}
+nav{display:flex;align-items:center;gap:3rem}
+nav a{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(245,240,232,.55);font-weight:400;
+  transition:color .2s;position:relative;padding-bottom:2px;
+}
+nav a::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:1px;background:var(--warm);
+  transform:scaleX(0);transform-origin:left;transition:transform .25s var(--ease);
+}
+nav a:hover{color:var(--cream)}
+nav a:hover::after{transform:scaleX(1)}
+.nav-book{
+  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  padding:10px 26px;border:1px solid var(--warm);color:var(--warm);
+  font-weight:400;transition:background .2s,color .2s;white-space:nowrap;
+}
+.nav-book:hover{background:var(--warm);color:var(--ink)}
+.hamburger{display:none;flex-direction:column;gap:6px;padding:4px;z-index:20}
+.hamburger span{width:26px;height:1px;background:var(--cream);transition:all .3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0;transform:translateX(-8px)}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mob-menu{
+  display:none;position:fixed;inset:0;top:var(--nav-h);
+  background:rgba(10,9,8,.97);backdrop-filter:blur(24px);
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:2.5rem;z-index:999;
+}
+.mob-menu.open{display:flex}
+.mob-menu a{
+  font-family:var(--ff-serif);font-size:32px;font-weight:400;
+  color:var(--cream2);letter-spacing:.05em;
+  transition:color .2s;
+}
+.mob-menu a:hover{color:var(--warm)}
+
+/* ══════════════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════════════ */
+#home{
+  position:relative;height:100vh;min-height:650px;
+  display:flex;align-items:center;overflow:hidden;
+}
+
+/* VIDEO CONTAINER — background video fills hero */
+.hero-vid-wrap{
+  position:absolute;inset:0;overflow:hidden;
+}
+/* Actual <video> element — swap src for your video file */
+.hero-video{
+  position:absolute;top:50%;left:50%;
+  min-width:100%;min-height:100%;
+  width:auto;height:auto;
+  transform:translate(-50%,-50%);
+  object-fit:cover;opacity:.45;
+}
+/* Fallback gradient when no video is loaded */
+.hero-vid-wrap::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 110% 90% at 65% 35%,rgba(200,169,110,.07) 0%,transparent 60%),
+    linear-gradient(160deg,rgba(10,9,8,0) 0%,rgba(10,9,8,.5) 100%);
+  z-index:1;
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(
+    to bottom,
+    rgba(10,9,8,.25) 0%,
+    rgba(10,9,8,.1) 40%,
+    rgba(10,9,8,.6) 80%,
+    rgba(10,9,8,.9) 100%
+  );
+  z-index:2;
+}
+/* Horizontal light leak */
+.hero-leak{
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 0%,var(--warm) 40%,var(--warm2) 60%,transparent 100%);
+  opacity:.6;z-index:3;
+}
+
+.hero-content{
+  position:relative;z-index:4;
+  max-width:1320px;margin:0 auto;padding:0 2.5rem;
+  padding-top:var(--nav-h);width:100%;
+}
+.hero-tag{
+  display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;
+  animation:fadeUp .9s ease both;
+}
+.hero-tag-line{width:40px;height:1px;background:var(--warm)}
+.hero-h1{
+  font-family:var(--ff-serif);
+  font-size:clamp(52px,9vw,130px);
+  font-weight:400;line-height:.93;
+  letter-spacing:-.02em;margin-bottom:2.5rem;
+  animation:fadeUp .9s .12s ease both;
+}
+.hero-h1 em{font-style:italic;color:var(--warm)}
+.hero-h1 .outline{
+  -webkit-text-stroke:1px var(--cream2);color:transparent;
+}
+.hero-sub{
+  max-width:420px;font-size:14px;
+  color:rgba(245,240,232,.6);line-height:1.9;
+  margin-bottom:3.5rem;
+  animation:fadeUp .9s .24s ease both;
+}
+.hero-btns{
+  display:flex;align-items:center;gap:2.5rem;
+  animation:fadeUp .9s .36s ease both;
+}
+.btn-gold{
+  display:inline-block;font-size:9px;letter-spacing:.25em;
+  text-transform:uppercase;padding:16px 44px;
+  background:var(--warm);color:var(--ink);font-weight:500;
+  transition:background .2s,transform .2s;
+}
+.btn-gold:hover{background:var(--warm2);transform:translateY(-2px)}
+.btn-line{
+  display:flex;align-items:center;gap:.75rem;
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(245,240,232,.5);transition:color .2s;
+}
+.btn-line span{transition:transform .2s}
+.btn-line:hover{color:var(--cream)}
+.btn-line:hover span{transform:translateX(5px)}
+
+.hero-meta{
+  position:absolute;bottom:3rem;right:2.5rem;z-index:4;
+  display:flex;gap:0;
+  animation:fadeUp .9s .5s ease both;
+}
+.hero-stat{
+  padding:1.2rem 2rem;text-align:center;
+  background:rgba(10,9,8,.5);backdrop-filter:blur(10px);
+  border:1px solid var(--border);border-right:none;
+}
+.hero-stat:last-child{border-right:1px solid var(--border)}
+.hero-stat .n{
+  font-family:var(--ff-serif);font-size:30px;font-weight:400;
+  color:var(--warm);display:block;line-height:1;
+}
+.hero-stat .d{
+  font-size:8px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(245,240,232,.35);margin-top:5px;
+}
+
+.hero-scroll{
+  position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;
+  z-index:4;animation:fadeUp .9s .65s ease both;
+}
+.hero-scroll p{font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--dim)}
+.scroll-wire{width:1px;height:50px;background:var(--border2);position:relative;overflow:hidden}
+.scroll-wire::after{
+  content:'';position:absolute;top:-100%;left:0;right:0;height:100%;
+  background:var(--warm);animation:scrollDrop 2s ease infinite;
+}
+@keyframes scrollDrop{
+  0%{top:-100%}50%{top:100%}51%{top:-100%}100%{top:-100%}
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(28px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ══════════════════════════════════════════════════════
+   SECTION SHARED
+══════════════════════════════════════════════════════ */
+section{padding:9rem 0}
+.sec-head{margin-bottom:5rem}
+.sec-head.center{text-align:center}
+.sec-h2{
+  font-family:var(--ff-serif);
+  font-size:clamp(34px,4.5vw,64px);
+  font-weight:400;line-height:1.1;
+  margin-top:.75rem;letter-spacing:-.01em;
+}
+.sec-h2 em{font-style:italic;color:var(--warm)}
+.gold-rule{width:44px;height:1px;background:var(--warm);margin:1.25rem 0}
+.gold-rule.center{margin:1.25rem auto}
+.sec-sub{
+  font-size:14px;color:var(--muted);
+  max-width:500px;line-height:1.9;
+}
+.sec-sub.center{margin:0 auto}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+/* ══════════════════════════════════════════════════════
+   ABOUT
+══════════════════════════════════════════════════════ */
+#about{background:var(--ink2)}
+.about-wrap{display:grid;grid-template-columns:1fr 1fr;gap:7rem;align-items:start}
+.about-left{}
+.about-right{}
+.about-body p{
+  font-size:14px;color:rgba(245,240,232,.55);line-height:1.95;margin-bottom:1.2rem;
+}
+.about-body p.lead{
+  font-family:var(--ff-serif);font-size:19px;font-weight:400;
+  color:var(--cream);line-height:1.75;margin-bottom:1.8rem;
+}
+.about-img-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem;position:relative}
+.about-img-pair img{width:100%;aspect-ratio:3/4;object-fit:cover;border:1px solid var(--border)}
+.about-img-pair .img-b{margin-top:3rem}
+.about-badge{
+  position:absolute;bottom:-1.5rem;left:50%;transform:translateX(-50%);
+  background:var(--warm);color:var(--ink);
+  padding:1rem 1.75rem;text-align:center;white-space:nowrap;z-index:2;
+}
+.about-badge .big{font-family:var(--ff-serif);font-size:32px;font-weight:400;line-height:1;display:block}
+.about-badge .sm{font-size:8px;letter-spacing:.2em;text-transform:uppercase;margin-top:3px}
+
+.project-list{margin-top:3rem}
+.project-list h3{
+  font-family:var(--ff-serif);font-size:20px;font-weight:400;
+  color:var(--cream);margin-bottom:1.5rem;
+}
+.pi{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 0;border-bottom:1px solid var(--border);
+  transition:padding-left .2s;
+}
+.pi:hover{padding-left:.75rem}
+.pi:hover .pi-arr{color:var(--warm)}
+.pi-left{}
+.pi-name{font-size:13px;font-weight:400;color:var(--cream);margin-bottom:2px}
+.pi-meta{font-size:10px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.pi-arr{font-size:14px;color:var(--dim);transition:color .2s}
+
+.vision{
+  margin-top:3rem;padding:2rem;border:1px solid var(--border);
+  background:var(--ink3);position:relative;overflow:hidden;
+}
+.vision::before{
+  content:'\201C';position:absolute;top:-1.5rem;left:1.5rem;
+  font-family:var(--ff-serif);font-size:140px;color:var(--border2);line-height:1;
+}
+.vision p{
+  font-family:var(--ff-serif);font-style:italic;font-size:17px;
+  font-weight:400;color:var(--cream2);line-height:1.75;
+  position:relative;z-index:1;
+}
+
+/* ══════════════════════════════════════════════════════
+   SERVICES
+══════════════════════════════════════════════════════ */
+#service{background:var(--ink)}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.svc{
+  background:var(--ink);padding:3rem 2.5rem;
+  position:relative;overflow:hidden;
+  transition:background .3s;
+}
+.svc:hover{background:var(--ink3)}
+.svc::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--warm);transform:scaleX(0);transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.svc:hover::before{transform:scaleX(1)}
+.svc-n{
+  font-family:var(--ff-serif);font-size:52px;font-weight:400;
+  color:var(--border2);line-height:1;margin-bottom:2rem;
+}
+.svc-ico{
+  width:48px;height:48px;border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.5rem;font-size:20px;color:var(--warm);
+  transition:border-color .3s,background .3s;
+}
+.svc:hover .svc-ico{border-color:var(--warm);background:rgba(200,169,110,.08)}
+.svc-title{
+  font-family:var(--ff-serif);font-size:21px;font-weight:400;
+  color:var(--cream);margin-bottom:1rem;line-height:1.3;
+}
+.svc-desc{font-size:13px;color:var(--muted);line-height:1.85;margin-bottom:1.5rem}
+.svc-tags{display:flex;flex-wrap:wrap;gap:.4rem}
+.stag{
+  font-size:8px;letter-spacing:.15em;text-transform:uppercase;
+  padding:4px 10px;border:1px solid var(--border);color:var(--dim);
+}
+
+/* ══════════════════════════════════════════════════════
+   PORTFOLIO
+══════════════════════════════════════════════════════ */
+#portfolio{background:var(--ink2)}
+.port-filters{display:flex;gap:.4rem;margin-bottom:3rem;flex-wrap:wrap}
+.pf{
+  font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  padding:8px 18px;border:1px solid var(--border);
+  background:none;color:var(--dim);
+  transition:all .2s;font-family:var(--ff-sans);
+}
+.pf:hover,.pf.active{border-color:var(--warm);color:var(--warm)}
+
+/* Masonry-style editorial grid */
+.port-grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  grid-auto-rows:auto;
+  gap:1.25rem;
+}
+.pg-item{
+  position:relative;overflow:hidden;
+  border:1px solid var(--border);cursor:none;
+  background:var(--ink3);
+}
+.pg-item:nth-child(1){grid-column:span 7;grid-row:span 2}
+.pg-item:nth-child(2){grid-column:span 5}
+.pg-item:nth-child(3){grid-column:span 5}
+.pg-item:nth-child(4){grid-column:span 4}
+.pg-item:nth-child(5){grid-column:span 4}
+.pg-item:nth-child(6){grid-column:span 4}
+.pg-img{
+  width:100%;display:block;
+  aspect-ratio:16/11;
+  object-fit:cover;
+  transition:transform .7s var(--ease),filter .5s;
+  filter:brightness(.88) saturate(.9);
+}
+.pg-item:nth-child(1) .pg-img{aspect-ratio:4/3}
+.pg-item:hover .pg-img{transform:scale(1.06);filter:brightness(.7) saturate(1.1)}
+.pg-over{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,9,8,.9) 0%,rgba(10,9,8,.3) 50%,transparent 100%);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:2rem;opacity:0;transition:opacity .35s;
+}
+.pg-item:hover .pg-over{opacity:1}
+.pg-cat{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--warm);margin-bottom:.5rem}
+.pg-title{font-family:var(--ff-serif);font-size:clamp(16px,2vw,22px);font-weight:400;color:var(--cream);margin-bottom:.6rem}
+.pg-copy{font-size:11px;color:rgba(245,240,232,.6);line-height:1.7;margin-bottom:1rem}
+.pg-link{
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--warm);display:inline-flex;align-items:center;gap:6px;
+  transition:gap .2s;
+}
+.pg-item:hover .pg-link{gap:10px}
+/* info strip below image */
+.pg-info{
+  padding:1rem 1.25rem;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.pg-info-left .pg-info-cat{font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--warm);margin-bottom:2px}
+.pg-info-left .pg-info-name{font-size:12px;color:var(--cream2);font-weight:400}
+.pg-year{font-family:var(--ff-serif);font-size:11px;color:var(--dim)}
+
+/* ══════════════════════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════════════════════ */
+#testimonials{background:var(--ink)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.tc{
+  padding:2.5rem;border:1px solid var(--border);background:var(--ink2);
+  position:relative;transition:border-color .3s;
+}
+.tc:hover{border-color:var(--border2)}
+.tc-q{
+  content:'\201C';font-family:var(--ff-serif);font-size:56px;
+  color:var(--border2);line-height:1;position:absolute;top:1.5rem;right:1.75rem;
+  font-style:italic;
+}
+.tc-stars{display:flex;gap:3px;margin-bottom:1.5rem}
+.tc-stars span{color:var(--warm);font-size:11px}
+.tc-text{
+  font-family:var(--ff-serif);font-style:italic;font-size:15px;
+  font-weight:400;color:var(--cream2);line-height:1.8;margin-bottom:2rem;
+}
+.tc-author{display:flex;align-items:center;gap:1rem}
+.tc-ava{
+  width:46px;height:46px;border-radius:50%;overflow:hidden;
+  border:1px solid var(--border2);flex-shrink:0;background:var(--ink3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-serif);font-size:15px;color:var(--warm);
+}
+.tc-ava img{width:100%;height:100%;object-fit:cover}
+.tc-name{font-size:13px;font-weight:500;color:var(--cream);margin-bottom:2px}
+.tc-role{font-size:10px;letter-spacing:.08em;color:var(--dim)}
+
+/* ══════════════════════════════════════════════════════
+   CONTACT
+══════════════════════════════════════════════════════ */
+#contact{background:var(--ink2)}
+.contact-split{display:grid;grid-template-columns:1fr 1fr;gap:7rem;align-items:start}
+.ci-list{margin-top:2.5rem}
+.ci{
+  display:flex;gap:1.5rem;align-items:flex-start;
+  padding:1.75rem 0;border-bottom:1px solid var(--border);
+}
+.ci:first-child{border-top:1px solid var(--border)}
+.ci-icon{
+  width:46px;height:46px;border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--warm);font-size:17px;flex-shrink:0;
+}
+.ci-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:.3rem}
+.ci-val{font-family:var(--ff-serif);font-size:18px;color:var(--cream);font-weight:400}
+.ci-val a{color:inherit;transition:color .2s}
+.ci-val a:hover{color:var(--warm)}
+
+.form-row{margin-bottom:1.5rem}
+.form-row label{
+  display:block;font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:.6rem;
+}
+.form-row input,
+.form-row textarea,
+.form-row select{
+  width:100%;background:var(--ink3);border:1px solid var(--border);
+  color:var(--cream);font-family:var(--ff-sans);font-size:13px;font-weight:300;
+  padding:13px 16px;outline:none;appearance:none;
+  transition:border-color .2s;
+}
+.form-row input::placeholder,
+.form-row textarea::placeholder{color:var(--dim)}
+.form-row input:focus,
+.form-row textarea:focus,
+.form-row select:focus{border-color:var(--warm)}
+.form-row textarea{resize:vertical;min-height:130px}
+.form-2c{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-submit{
+  width:100%;padding:16px;background:var(--warm);
+  color:var(--ink);font-family:var(--ff-sans);font-size:9px;
+  font-weight:500;letter-spacing:.25em;text-transform:uppercase;
+  border:none;cursor:none;transition:background .2s;
+}
+.form-submit:hover{background:var(--warm2)}
+
+/* ══════════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════════ */
+footer{
+  background:var(--ink);
+  border-top:1px solid var(--border);
+  padding:5.5rem 0 2.5rem;
+}
+.footer-top{
+  display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;gap:4rem;
+  padding-bottom:4rem;border-bottom:1px solid var(--border);
+}
+.fbrand p{
+  font-size:13px;color:var(--muted);line-height:1.85;
+  margin:1.5rem 0;max-width:280px;
+}
+.social-row{display:flex;gap:.6rem;margin-top:1.5rem}
+.soc{
+  width:36px;height:36px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--dim);font-size:11px;font-weight:500;
+  transition:border-color .2s,color .2s;font-family:var(--ff-sans);
+  letter-spacing:0;
+}
+.soc:hover{border-color:var(--warm);color:var(--warm)}
+.fcol h4{
+  font-size:9px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--warm);margin-bottom:1.5rem;font-weight:500;
+}
+.fcol ul{list-style:none}
+.fcol ul li{margin-bottom:.8rem}
+.fcol ul li a{
+  font-size:13px;color:var(--muted);
+  transition:color .2s;
+}
+.fcol ul li a:hover{color:var(--cream)}
+.footer-bot{
+  padding-top:2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1rem;
+}
+.fcopy{font-size:11px;color:var(--dim)}
+.flegal{display:flex;gap:1.5rem}
+.flegal a{font-size:11px;color:var(--dim);transition:color .2s}
+.flegal a:hover{color:var(--muted)}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+@media(max-width:1080px){
+  .about-wrap{grid-template-columns:1fr;gap:4rem}
+  .svc-grid{grid-template-columns:repeat(2,1fr)}
+  .testi-grid{grid-template-columns:1fr 1fr}
+  .footer-top{grid-template-columns:1fr 1fr;gap:2.5rem}
+}
+@media(max-width:768px){
+  section{padding:5rem 0}
+  nav,
+  .nav-book{display:none}
+  .hamburger{display:flex}
+  .hero-h1{font-size:48px}
+  .hero-meta{display:none}
+  .svc-grid{grid-template-columns:1fr}
+  .port-grid{grid-template-columns:1fr}
+  .pg-item{grid-column:span 1!important;grid-row:span 1!important}
+  .pg-over{opacity:1}
+  .testi-grid{grid-template-columns:1fr}
+  .contact-split{grid-template-columns:1fr;gap:3.5rem}
+  .footer-top{grid-template-columns:1fr}
+  .footer-bot{flex-direction:column;align-items:flex-start}
+  .form-2c{grid-template-columns:1fr}
+  #cursor,#cursor-ring{display:none}
+  body{cursor:auto}
+  button{cursor:pointer}
+  a{cursor:pointer}
+}
+</style>
+</head>
+<body>
+
+<!-- CURSORS -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+<header id="nav">
+  <div class="nav-inner">
+
+    <!-- LOGO: replace the div below with your own <img> tag -->
+    <a href="#home" class="logo-link" id="logo-link">
+      <div class="logo">
+      <img src="photo.png" alt="KS">
+      </div>
+      <span class="logo-name">Photography Studio<sup>®</sup></span>
+    </a>
+
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#service">Service</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <a href="#contact" class="nav-book">Book a Session</a>
+
+    <button class="hamburger" id="ham" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<div class="mob-menu" id="mob-menu">
+  <a href="#home"      onclick="closeMob()">Home</a>
+  <a href="#about"     onclick="closeMob()">About</a>
+  <a href="#service"   onclick="closeMob()">Service</a>
+  <a href="#portfolio" onclick="closeMob()">Portfolio</a>
+  <a href="#contact"   onclick="closeMob()">Contact</a>
+</div>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section id="home">
+  <div class="hero-vid-wrap">
+    <!--
+      BACKGROUND VIDEO — replace with your video:
+      <video class="hero-video" autoplay muted loop playsinline>
+        <source src="your-hero-video.mp4" type="video/mp4">
+      </video>
+    -->
+    <!-- Cinematic still fallback using a real photography image -->
+        <video autoplay loop muted playsinline>
+            <source src="2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="content">
+        <h1>Nikon Z Series</h1>
+        <p>Capture the dark. Capture the light.</p>
+        <button class="btn">Explore More</button>
+    </div>
+   
+  <div class="hero-overlay"></div>
+  <div class="hero-leak"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag">
+      <div class="hero-tag-line"></div>
+      <span class="label">Photography Studio — Est. 2023</span>
+    </div>
+
+    <h1 class="hero-h1">
+      We capture<br>
+      <em>light</em> in its<br>
+      <span class="outline">purest form</span>
+    </h1>
+
+    <p class="hero-sub">
+      Award-winning photography for brands, editorials, and intimate moments. Every frame is a story waiting to unfold.
+    </p>
+
+    <div class="hero-btns">
+      <a href="#portfolio" class="btn-gold">View Portfolio</a>
+      <a href="#contact" class="btn-line">Book a Session <span>→</span></a>
+    </div>
+  </div>
+
+  <div class="hero-meta">
+    <div class="hero-stat"><span class="n">800+</span><span class="d">Sessions</span></div>
+    <div class="hero-stat"><span class="n">120+</span><span class="d">Clients</span></div>
+    <div class="hero-stat"><span class="n">18</span><span class="d">Awards</span></div>
+  </div>
+
+  <div class="hero-scroll">
+    <p>Scroll</p>
+    <div class="scroll-wire"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ ABOUT ═══════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <div class="about-wrap">
+
+      <!-- LEFT: Text + Projects + Vision -->
+      <div>
+        <div class="sec-head reveal">
+          <span class="label">Our Story</span>
+          <h2 class="sec-h2">Crafting <em>visual</em> poetry since 2015</h2>
+          <div class="gold-rule"></div>
+        </div>
+
+        <div class="about-body reveal d1">
+          <p class="lead">
+            K S Phographt Studio is a boutique photography studio rooted in the belief that every image should move the viewer — not just inform them.
+          </p>
+          <p>
+            Founded by award-winning photographer Élise Laurent, our studio specialises in editorial portraiture, commercial campaigns, and documentary work that transcends the ordinary. We work with a select roster of brands, publications, and private clients to produce imagery that carries weight and feeling.
+          </p>
+          <p>
+            From intimate boudoir sessions to large-scale campaign productions, our philosophy remains constant: patience, light, and truth.
+          </p>
+        </div>
+
+        <div class="project-list reveal d2">
+          <h3>Selected Projects</h3>
+          <div class="pi">
+            <div class="pi-left">
+              <div class="pi-name">Vogue France — Season Editorial</div>
+              <div class="pi-meta">Editorial · 2024</div>
+            </div>
+            <span class="pi-arr">→</span>
+          </div>
+          <div class="pi">
+            <div class="pi-left">
+              <div class="pi-name">ZARA Summer Campaign</div>
+              <div class="pi-meta">Commercial · 2024</div>
+            </div>
+            <span class="pi-arr">→</span>
+          </div>
+          <div class="pi">
+            <div class="pi-left">
+              <div class="pi-name">Desert Light — Solo Exhibition</div>
+              <div class="pi-meta">Fine Art · 2024</div>
+            </div>
+            <span class="pi-arr">→</span>
+          </div>
+          <div class="pi">
+            <div class="pi-left">
+              <div class="pi-name">Aesop Brand Identity Shoot</div>
+              <div class="pi-meta">Commercial · Product · 2024</div>
+            </div>
+            <span class="pi-arr">→</span>
+          </div>
+          <div class="pi">
+            <div class="pi-left">
+              <div class="pi-name">A Thousand Faces — Book</div>
+              <div class="pi-meta">Portraiture · Publishing · 2023</div>
+            </div>
+            <span class="pi-arr">→</span>
+          </div>
+        </div>
+
+        <div class="vision reveal d3">
+          <p>
+            Our vision is a world where photography is not decoration, but a language — one capable of closing the distance between strangers and turning fleeting seconds into permanent truths.
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT: Image pair -->
+      <div class="reveal d2">
+        <div class="about-img-pair">
+          <img
+            src="photo.jpeg"
+            alt="Studio photographer at work"/>
+          <img
+            class="img-b"
+            src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=600&q=80"
+            alt="Photography equipment"/>
+          <div class="about-badge">
+            <span class="big">10</span>
+            <span class="sm">Years of Light</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SERVICE ═══════════════════════════ -->
+<section id="service">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="label">What We Offer</span>
+      <h2 class="sec-h2">Services built for <em>impact</em></h2>
+      <div class="gold-rule"></div>
+      <p class="sec-sub">Every service is delivered with the same obsessive attention to light, composition, and story.</p>
+    </div>
+
+    <div class="svc-grid reveal">
+
+      <div class="svc">
+        <div class="svc-n">01</div>
+        <div class="svc-ico">◈</div>
+        <h3 class="svc-title">Editorial & Fashion</h3>
+        <p class="svc-desc">High-concept editorial work for magazines, lookbooks, and fashion campaigns. We build entire visual narratives around a garment, a season, an idea.</p>
+        <div class="svc-tags">
+          <span class="stag">Vogue</span>
+          <span class="stag">Lookbook</span>
+          <span class="stag">Campaign</span>
+        </div>
+      </div>
+
+      <div class="svc">
+        <div class="svc-n">02</div>
+        <div class="svc-ico">◐</div>
+        <h3 class="svc-title">Portrait & Headshots</h3>
+        <p class="svc-desc">Corporate headshots, artistic portraits, and personal branding sessions. We reveal character, not just appearance. Studio or location, natural or strobe.</p>
+        <div class="svc-tags">
+          <span class="stag">Executive</span>
+          <span class="stag">Artist</span>
+          <span class="stag">Personal Brand</span>
+        </div>
+      </div>
+
+      <div class="svc">
+        <div class="svc-n">03</div>
+        <div class="svc-ico">◉</div>
+        <h3 class="svc-title">Commercial & Product</h3>
+        <p class="svc-desc">Compelling product and brand imagery for e-commerce, advertising, and catalogues. Shot with precision to drive desire and conversion.</p>
+        <div class="svc-tags">
+          <span class="stag">E-Commerce</span>
+          <span class="stag">Advertising</span>
+          <span class="stag">Still Life</span>
+        </div>
+      </div>
+
+      <div class="svc">
+        <div class="svc-n">04</div>
+        <div class="svc-ico">⬡</div>
+        <h3 class="svc-title">Wedding & Events</h3>
+        <p class="svc-desc">Documentary-style wedding coverage and event photography that honours the authentic moments — the glance, the laugh, the tear — not the posed.</p>
+        <div class="svc-tags">
+          <span class="stag">Wedding</span>
+          <span class="stag">Gala</span>
+          <span class="stag">Corporate Event</span>
+        </div>
+      </div>
+
+      <div class="svc">
+        <div class="svc-n">05</div>
+        <div class="svc-ico">◳</div>
+        <h3 class="svc-title">Fine Art & Exhibition</h3>
+        <p class="svc-desc">Limited-edition fine art prints and exhibition-ready collections. Museum-quality printing on archival media. Ideal for collectors and galleries.</p>
+        <div class="svc-tags">
+          <span class="stag">Print</span>
+          <span class="stag">Gallery</span>
+          <span class="stag">Collection</span>
+        </div>
+      </div>
+
+      <div class="svc">
+        <div class="svc-n">06</div>
+        <div class="svc-ico">⬢</div>
+        <h3 class="svc-title">Video & Reels</h3>
+        <p class="svc-desc">Cinematic short-form video production — brand films, behind-the-scenes content, and social reels that capture the same quality as our stills.</p>
+        <div class="svc-tags">
+          <span class="stag">Brand Film</span>
+          <span class="stag">Reel</span>
+          <span class="stag">BTS</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PORTFOLIO ═══════════════════════════ -->
+<section id="portfolio">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="label">Our Work</span>
+      <h2 class="sec-h2">Selected <em>frames</em></h2>
+      <div class="gold-rule"></div>
+    </div>
+
+    <div class="port-filters reveal">
+      <button class="pf active">All</button>
+      <button class="pf">Editorial</button>
+      <button class="pf">Portrait</button>
+      <button class="pf">Commercial</button>
+      <button class="pf">Wedding</button>
+      <button class="pf">Fine Art</button>
+    </div>
+
+    <div class="port-grid reveal">
+
+      <!-- ITEM 1 — large feature -->
+      <div class="pg-item">
+        <img class="pg-img"
+          src="amman.jpeg"
+          alt="Vogue France Editorial"/>
+        <div class="pg-over">
+          <div class="pg-cat">Editorial</div>
+          <div class="pg-title">Goddess — Saraswati</div>
+          <span class="pg-year">2024</span>
+          <div class="pg-copy">The Hindu deity of knowledge, music, art, speech, wisdom, and learning. </div>
+          <a href="#" class="pg-link">View Case Study →</a>
+        </div>
+        <div class="pg-info">
+          <div class="pg-info-left">
+               <div class="pg-info-cat"></div>
+            <div class="pg-info-name"></div>
+          </div>
+        </div>
+        </div>
+      <!-- ITEM 2 -->
+      <div class="pg-item">
+        <img class="pg-img"
+          src="flower1.jpeg"
+          alt="Portrait session"/>
+        <div class="pg-over">
+          <div class="pg-cat">Portrait</div>
+          <div class="pg-title">Sky-Flower</div>
+          <div class="pg-copy">Documentary portrait series across five cities.</div>
+          <a href="#" class="pg-link">View Project →</a>
+        </div>
+        <div class="pg-info">
+          <div class="pg-info-left">
+            <div class="pg-info-cat">Portrait</div>
+            <div class="pg-info-name">Faces of the City</div>
+          </div>
+          <span class="pg-year">2024</span>
+        </div>
+      </div>
+
+      <!-- ITEM 3 -->
+      <div class="pg-item">
+        <img class="pg-img"
+          src="flower2.jpeg"
+          alt="ZARA commercial"/>
+        <div class="pg-over">
+          <div class="pg-cat">Commercial</div>
+          <div class="pg-title">Oleander</div>
+          <div class="pg-copy">Full e-commerce campaign for summer 2024 collection.</div>
+          <a href="#" class="pg-link">View Project →</a>
+        </div>
+        <div class="pg-info">
+          <div class="pg-info-left">
+            <div class="pg-info-cat">Commercial</div>
+            <div class="pg-info-name">Oleander</div>
+          </div>
+          <span class="pg-year">2024</span>
+        </div>
+      </div>
+
+      <!-- ITEM 4 -->
+      <div class="pg-item">
+        <img class="pg-img"
+          src="flower3.jpeg"
+          alt="Wedding photography"/>
+        <div class="pg-over">
+          <div class="pg-cat">Photo</div>
+          <div class="pg-title">Moss — Rose</div>
+          <div class="pg-copy">Intimate vineyard wedding in the Luberon Valley.</div>
+          <a href="#" class="pg-link">View Gallery →</a>
+        </div>
+        <div class="pg-info">
+          <div class="pg-info-left">
+            <div class="pg-info-cat">Photo</div>
+            <div class="pg-info-name">Moss — Rose</div>
+          </div>
+          <span class="pg-year">2023</span>
+        </div>
+      </div>
+
+      <!-- ITEM 5 -->
+      <div class="pg-item">
+        <img class="pg-img"
+          src="vilakku.jpeg"
+          alt="Fine art flowers"/>
+        <div class="pg-over">
+          <div class="pg-cat">Art</div>
+          <div class="pg-title">Flame — Edition</div>
+          <div class="pg-copy">12-piece archival print series exploring transience.</div>
+          <a href="#" class="pg-link">View Collection →</a>
+        </div>
+        <div class="pg-info">
+          <div class="pg-info-left">
+            <div class="pg-info-cat">Fine Art</div>
+            <div class="pg-info-name">Flame— Edition</div>
+          </div>
+          <span class="pg-year">2023</span>
+        </div>
+      </div>
+
+      <!-- ITEM 6 -->
+      <div class="pg-item">
+        <img class="pg-img"
+          src="kurivi.jpeg"
+          alt="Aesop product shoot"/>
+        <div class="pg-over">
+          <div class="pg-cat">Yellow Plumage</div>
+          <div class="pg-title">Oriole</div>
+          <div class="pg-copy">Still life product campaign for global skincare brand.</div>
+          <a href="#" class="pg-link">View Project →</a>
+        </div>
+        <div class="pg-info">
+          <div class="pg-info-left">
+            <div class="pg-info-cat">Yelloe Plumage</div>
+            <div class="pg-info-name">Oriole</div>
+          </div>
+          <span class="pg-year">2023</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ TESTIMONIALS ═══════════════════════════ -->
+<section id="testimonials">
+  <div class="container">
+    <div class="sec-head center reveal">
+      <span class="label">Client Stories</span>
+      <h2 class="sec-h2">What clients <em>say</em></h2>
+      <div class="gold-rule center"></div>
+      <p class="sec-sub center">We measure success in the silence when someone first sees their image — that pause before they speak.</p>
+    </div>
+
+    <div class="testi-grid">
+
+      <div class="tc reveal">
+        <div class="tc-q">"</div>
+        <div class="tc-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="tc-text">
+          Élise has an extraordinary ability to disappear on set while remaining completely in control. The images from our Vogue shoot were unlike anything we had commissioned before — emotional, raw, and technically flawless.
+        </p>
+        <div class="tc-author">
+          <div class="tc-ava">
+            <img src="adi.jpeg" alt="Sophie Marchetti"/>
+          </div>
+          <div>
+            <div class="tc-name">Adithiya</div>
+            <div class="tc-role">Creative Director, Vogue France</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tc reveal d1">
+        <div class="tc-q">"</div>
+        <div class="tc-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="tc-text">
+          We booked Lumière for our summer campaign and the ROI was immediate — conversion on the new product pages increased 41% the month after launch. But beyond the numbers, we finally have imagery we are proud of.
+        </p>
+        <div class="tc-author">
+          <div class="tc-ava">
+            <img src="gokul.jpeg" alt="James Harrington"/>
+          </div>
+          <div>
+            <div class="tc-name">Gokul</div>
+            <div class="tc-role">Brand Director, ZARA UK</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tc reveal d2">
+        <div class="tc-q">"</div>
+        <div class="tc-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="tc-text">
+          Our wedding photographs are hanging in three rooms of our home. Every time I walk past them I feel that day again — the warmth, the nerves, the joy. Lumière captured not just images but memory itself.
+        </p>
+        <div class="tc-author">
+          <div class="tc-ava">
+            <img src="giri.jpeg" alt="Isabelle Renard"/>
+          </div>
+          <div>
+            <div class="tc-name">Giritharan</div>
+            <div class="tc-role">Wedding Client, Provence 2023</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ CONTACT ═══════════════════════════ -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-split">
+
+      <!-- LEFT: Info -->
+      <div>
+        <div class="sec-head reveal">
+          <span class="label">Reach Us</span>
+          <h2 class="sec-h2">Let's create something <em>unforgettable</em></h2>
+          <div class="gold-rule"></div>
+          <p class="sec-sub">Whether you have a brief or just an idea, we'd love to talk. Tell us about your project.</p>
+        </div>
+
+        <div class="ci-list reveal d1">
+          <div class="ci">
+            <div class="ci-icon">✆</div>
+            <div>
+              <div class="ci-label">Phone</div>
+              <div class="ci-val"><a href="tel:+91 8438102481">+91 8438102481
+
+              </a></div>
+            </div>
+          </div>
+          <div class="ci">
+            <div class="ci-icon">✉</div>
+            <div>
+              <div class="ci-label">Email</div>
+              <div class="ci-val"><a href="mailto:hello@lumiere.studio">ks kannanstudio@gmail.com</a></div>
+            </div>
+          </div>
+          <div class="ci">
+            <div class="ci-icon">◎</div>
+            <div>
+              <div class="ci-label">Studio</div>
+              <div class="ci-val">Kaliamma Kovil Street,Uthayathithamangalam,Thiruvalaputhur(post),Mayiladuthurai(tk&dk) 609205</div>
+            </div>
+          </div>
+          <div class="ci">
+            <div class="ci-icon">◷</div>
+            <div>
+              <div class="ci-label">Hours</div>
+              <div class="ci-val">Mon–Fri 9am–7pm · Sat by appt.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Form -->
+      <div class="reveal d2">
+        <div class="form-2c">
+          <div class="form-row">
+            <label for="fn">First Name</label>
+            <input type="text" id="fn" placeholder="Your first name"/>
+          </div>
+          <div class="form-row">
+            <label for="ln">Last Name</label>
+            <input type="text" id="ln" placeholder="Your last name"/>
+          </div>
+        </div>
+        <div class="form-2c">
+          <div class="form-row">
+            <label for="em">Email</label>
+            <input type="email" id="em" placeholder="your@email.com"/>
+          </div>
+          <div class="form-row">
+            <label for="ph">Phone</label>
+            <input type="tel" id="ph" placeholder="+91 00000 00000"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="sv">Service Interest</label>
+          <select id="sv">
+            <option value="">Select a service</option>
+            <option>Editorial &amp; Fashion</option>
+            <option>Portrait &amp; Headshots</option>
+            <option>Commercial &amp; Product</option>
+            <option>Wedding &amp; Events</option>
+            <option>Fine Art &amp; Exhibition</option>
+            <option>Video &amp; Reels</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="msg">Project Brief</label>
+          <textarea id="msg" placeholder="Tell us about your project, dates, location, and budget..."></textarea>
+        </div>
+        <button class="form-submit" onclick="submitForm(this)">Send Enquiry →</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+
+      <div class="fbrand">
+        <a href="#home" class="logo-link">
+          <div class="logo"></div>
+          <img src="photo.png" alt="KS">
+          <span class="logo-name">Photography Studio<sup>®</sup></span>
+        </a>
+        <p>A boutique photography studio based in Paris, working globally with brands, publications, and private clients who demand images with depth and feeling.</p>
+        <div class="social-row">
+          <a class="soc" href="#" aria-label="Instagram">Ig</a>
+          <a class="soc" href="#" aria-label="Pinterest">Pi</a>
+          <a class="soc" href="#" aria-label="LinkedIn">In</a>
+          <a class="soc" href="#" aria-label="Behance">Bé</a>
+          <a class="soc" href="#" aria-label="Twitter / X">𝕏</a>
+        </div>
+      </div>
+
+      <div class="fcol">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#service">Services</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="fcol">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#service">Editorial &amp; Fashion</a></li>
+          <li><a href="#service">Portraits</a></li>
+          <li><a href="#service">Commercial</a></li>
+          <li><a href="#service">Wedding</a></li>
+          <li><a href="#service">Fine Art Prints</a></li>
+        </ul>
+      </div>
+
+      <div class="fcol">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="#">Our Story</a></li>
+          <li><a href="#">Behind the Lens</a></li>
+          <li><a href="#">Press &amp; Awards</a></li>
+          <li><a href="#">Print Shop</a></li>
+          <li><a href="#">Gift Vouchers</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bot">
+      <p class="fcopy">© 2025 KS Photography Studio. All rights reserved.</p>
+      <div class="flegal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Licensing</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════ SCRIPTS ═══════════════════════════ -->
+<script>
+/* ── CURSOR ── */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+function animCursor(){
+  rx += (mx-rx)*.12; ry += (my-ry)*.12;
+  cur.style.left = mx+'px'; cur.style.top = my+'px';
+  ring.style.left = rx+'px'; ring.style.top = ry+'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('a,button,.pg-item,.pi,.svc').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));
+});
+
+/* ── NAV SCROLL ── */
+const navEl = document.getElementById('nav');
+window.addEventListener('scroll',()=>{
+  navEl.classList.toggle('scrolled', window.scrollY > 50);
+},{ passive:true });
+
+/* ── HAMBURGER ── */
+const ham = document.getElementById('ham');
+const mob = document.getElementById('mob-menu');
+ham.addEventListener('click',()=>{
+  ham.classList.toggle('open');
+  mob.classList.toggle('open');
+});
+function closeMob(){ ham.classList.remove('open'); mob.classList.remove('open'); }
+
+/* ── PORTFOLIO FILTERS ── */
+document.querySelectorAll('.pf').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.pf').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+/* ── SCROLL REVEAL ── */
+const revEls = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{ threshold:.1, rootMargin:'0px 0px -50px 0px' });
+revEls.forEach(el=>obs.observe(el));
+
+/* ── FORM ── */
+function submitForm(btn){
+  btn.textContent = '✓ Message Sent — We\'ll be in touch';
+  btn.style.background = 'var(--warm3)';
+  btn.disabled = true;
+  setTimeout(()=>{
+    btn.textContent = 'Send Enquiry →';
+    btn.style.background = '';
+    btn.disabled = false;
+  }, 5000);
+}
+
+/* ── SMOOTH ACTIVE NAV ── */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+const io2 = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navLinks.forEach(l=>l.style.color='');
+      const active = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if(active) active.style.color='var(--cream)';
+    }
+  });
+},{threshold:.4});
+sections.forEach(s=>io2.observe(s));
+</script>
+</body>
+</html>
